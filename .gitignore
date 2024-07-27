@@ -1,0 +1,7 @@
+#ignore Python specific files
+
+__pycache__/
+*.py[cod]
+*.so
+*.pyc
+*.pyo

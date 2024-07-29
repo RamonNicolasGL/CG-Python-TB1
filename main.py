@@ -1,6 +1,8 @@
 import pygame
 
-from LibGC import (
+from Heroes.Penguato import Penguato
+
+from LibCG.LibCG import (
     Window,
     Draw,
     Resources,
@@ -14,6 +16,9 @@ from LibGC import (
 
 # Inicialize o Pygame
 pygame.init()
+
+FPS = 30
+clock = pygame.time.Clock()
 
 
 
@@ -38,31 +43,35 @@ pixels = Window.create_Image(500,500)
 #Square.insert_Point(200, 200)
 #Square.insert_Point(200, 50)
 
-Square = TextureShape(
-            [
-                [50,  150, 0, 0],
-                [50,   50, 0, 1],
-                [150,  50, 1, 1],
-                [150, 150, 1, 0]
-            ]
-)
+penguato = Penguato(pixels)
 
-#Draw.polygon(pixels, Square, (255, 255, 255))
+FPS = 30
+clock = pygame.time.Clock()
 
-Catguin = Texture.import_texture("Catguin.jpeg")
+while True:
+    
+    #if pygame.event.get(pygame.QUIT): break
+    #pygame.event.pump()
+        
+    #Draw.polygon(pixels, Square, (255, 255, 255))
+    transformation = Transformations.create_transformation_matrix()
 
-transformation = Transformations.create_transformation_matrix()
+    transformation = Transformations.compose_translation(transformation, 1, 3)
 
-transformation = Transformations.compose_translation(transformation, 100, 300)
+    penguato.shape = Transformations.apply_transformation(penguato.shape, transformation)
+    
+    pixels.fill((255, 255, 255))
 
-Square = Transformations.apply_transformation(Square, transformation)
-
-Texture.scanline_with_texture(pixels, Square, Catguin)
+    Texture.scanline_with_texture(pixels, penguato.shape, penguato.Texture)
+    
+    pygame.display.flip()
+    
+    clock.tick(60)
 
 #Draw.scanline(pixels, Square, (255, 255, 255))
 
 #Loop principal
-executando = True
+'''executando = True
 while executando:
     for evento in pygame.event.get():
         if evento.type == pygame.QUIT:
@@ -72,4 +81,4 @@ while executando:
     Window.show_Image(pixels)
 
 # Encerre o Pygame
-pygame.quit()
+pygame.quit()'''

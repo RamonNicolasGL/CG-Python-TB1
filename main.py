@@ -65,8 +65,20 @@ while True:
     Texture.scanline_with_texture(pixels, penguato.shape, penguato.Texture)
     
     pygame.display.flip()
+
+    # viewport_game = [0, 0, 500, 550]
+    # window_game = [0, 0, 500, 550]
+    # Square = Shape() 
+    # Square.insert_Point(50,50)
+    # Square.insert_Point(50,200)
+    # Square.insert_Point(200, 200)
+    # Square.insert_Point(200, 50)
+
+    # penguato.shape = transformation.map_window(penguato.shape,  window_game, viewport_game)
+
     
     clock.tick(60)
+
 
 #Draw.scanline(pixels, Square, (255, 255, 255))
 

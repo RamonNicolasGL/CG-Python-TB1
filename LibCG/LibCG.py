@@ -1,6 +1,7 @@
 import pygame
 import math
 import os
+import time
 import numpy as np
 from PIL import Image
 
@@ -285,6 +286,40 @@ class Draw:
             if len(p_int) != 0:
                 Draw.print_scan(screen, p_int, intensidade)
 
+    def flood_fill(image_to_fill, color, x, y, delay=False):
+        initial_color = Window.get_pixel_with_texture(image_to_fill, x, y)
+
+        if color == initial_color:
+            return
+
+        stack = [(x, y)]
+
+        while stack:
+            x, y = stack.pop()
+
+            color = Window.get_pixel_with_texture(image_to_fill, x, y)
+
+            if color != initial_color:
+                continue
+
+            if delay:
+                time.sleep(0.000001)
+                pygame.display.update()
+
+            image_to_fill = Draw.set_pixel(image_to_fill, x, y, color)
+
+            if x + 1 < image_to_fill.get_width():
+                stack.append((x + 1, y))
+
+            if x >= 1:
+                stack.append((x - 1, y))
+
+            if y + 1 < image_to_fill.get_height():
+                stack.append((x, y + 1))
+
+            if y >= 1:
+                stack.append((x, y - 1))
+
 #Shapes
 class Shape:
     
@@ -487,3 +522,26 @@ class Transformations:
         if type(polygon) is Shape:
             return Shape(points)
         return TextureShape(points)
+    
+    def map_window(pol, window, viewport):
+        x_ini_vp = viewport[0]
+        y_ini_vp = viewport[1]
+        x_fin_vp = viewport[2]
+        y_fin_vp = viewport[3]
+        x_ini = window[0]
+        y_ini = window[1]
+        x_fin = window[2]
+        y_fin = window[3]
+
+        a = (x_fin_vp - x_ini_vp) / (x_fin - x_ini)
+        b = (y_fin_vp - y_ini_vp) / (y_fin - y_ini)
+
+        matrix = np.array(
+            [
+                [a, 0, x_ini_vp - a * x_ini],
+                [0, b, y_fin_vp - b * y_ini],
+                [0, 0, 1],
+            ]
+        )
+
+        return Transformations.apply_transformation(pol, matrix)

@@ -1,4 +1,4 @@
-from LibCG.LibCG import (Texture, TextureShape)
+from LibCG.LibCG import (Texture, TextureShape, Transformations)
 
 class Penguato:
     
@@ -8,10 +8,33 @@ class Penguato:
         self.image = image
         self.shape = TextureShape(
                 [
-                    [50,  150, 0, 0],
-                    [50,   50, 0, 1],
-                    [150,  50, 1, 1],
-                    [150, 150, 1, 0]
+                    [150,  250, 0, 0],
+                    [150,   150, 0, 1],
+                    [200,  150, 1, 1],
+                    [200, 250, 1, 0]
                 ]
         )
 
+    def to_Left(self, a):
+        
+        matrix = Transformations.create_transformation_matrix()
+        matrix = Transformations.compose_translation(matrix, -10*a, 0)
+        self.shape = Transformations.apply_transformation(self.shape, matrix)
+        
+    def to_Right(self, a):
+        
+        matrix = Transformations.create_transformation_matrix()
+        matrix = Transformations.compose_translation(matrix, 10*a, 0)
+        self.shape = Transformations.apply_transformation(self.shape, matrix)
+    
+    def to_Up(self, a):
+        
+        matrix = Transformations.create_transformation_matrix()
+        matrix = Transformations.compose_translation(matrix, 0, 10*a)
+        self.shape = Transformations.apply_transformation(self.shape, matrix)
+    
+    def to_Down(self, a):
+        
+        matrix = Transformations.create_transformation_matrix()
+        matrix = Transformations.compose_translation(matrix, 0, -10*a)
+        self.shape = Transformations.apply_transformation(self.shape, matrix)

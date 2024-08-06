@@ -315,6 +315,7 @@ class TextureShape:
         return max(int(row[1]) for row in self.points)
 
     def center(self):
+        
         x_sum = sum(row[0] for row in self.points)
         y_sum = sum(row[1] for row in self.points)
         num_points = len(self.points)

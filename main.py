@@ -1,6 +1,8 @@
 import pygame
 
 from Heroes.Penguato import Penguato
+from Heroes.Peixorro import Peixorro
+
 
 from LibCG.LibCG import (
     Window,
@@ -11,21 +13,6 @@ from LibCG.LibCG import (
     TextureShape,
     Transformations
 )
-
-
-
-# Inicialize o Pygame
-pygame.init()
-
-
-#clock = pygame.time.Clock()
-
-
-
-#Cria janela com altura e largura especificadas
-pixels = Window.create_Image(900,600)
-
-
 
 #testes
 
@@ -43,12 +30,26 @@ pixels = Window.create_Image(900,600)
 #Square.insert_Point(200, 200)
 #Square.insert_Point(200, 50)
 
+#Cria janela com altura e largura especificadas
+pixels = Window.create_Image(900,600)
+
+# Inicialize o Pygame
+pygame.init()
+
+peixorros =[]
 penguato = Penguato(pixels)
+peixorro = Peixorro(pixels)
+
+sea_blue = (51, 97, 127)
 blue_pastel = (159, 174, 214)
 FPS = 45
 clock = pygame.time.Clock()
+peixorro_Showtime = 1000
+last_ShownPeixorro = 0
 
 while True:
+    
+    current_time = pygame.time.get_ticks()
     
     if pygame.event.get(pygame.QUIT): 
         break
@@ -58,20 +59,39 @@ while True:
     keys = pygame.key.get_pressed()    
     
     if keys[pygame.K_LEFT]:
-        Penguato.to_Left(penguato, 1)
+        penguato.to_Left(1)
         
     if keys[pygame.K_RIGHT]:
-        Penguato.to_Right(penguato, 1)
+        penguato.to_Right(1)
         
     if keys[pygame.K_UP]:
-        Penguato.to_Up(penguato, 1)
+        penguato.to_Up(1)
         
     if keys[pygame.K_DOWN]:
-        Penguato.to_Down(penguato, 1)  
-         
-    pixels.fill(blue_pastel)
+        penguato.to_Down(1)  
+        
+    peixorro.to_Left( 1)
+    
+    #if keys[pygame.K_SPACE]:
+    #    Penguato.rotate(penguato, 1)
+    
+    if current_time - last_ShownPeixorro >= peixorro_Showtime:
+        
+        peixorros.append(Peixorro(pixels))
+        last_ShownPeixorro = current_time
+        
+    pixels.fill(sea_blue)
+    
+    for i in range(len(peixorros)):
+        peixorros[i].to_Left(1)
 
-    Texture.scanline_with_texture(pixels, penguato.shape, penguato.Texture)
+    # Desenha todos os polígonos armazenados na lista
+    for peixorro in peixorros:
+        peixorro.show(pixels)
+    
+    peixorro.show(pixels)
+    penguato.show(pixels)           
+    #Texture.scanline_with_texture(pixels, penguato.shape, penguato.Texture)
     
     pygame.display.flip()
     

@@ -14,21 +14,6 @@ from LibCG.LibCG import (
     Transformations
 )
 
-#testes
-
-#Draw.set_Pixel(pixels, 250, 250, 255)
-
-#Draw.dda(pixels,270, 270, 350, 350, 255)
-
-#Draw.dda_aa(pixels, 270, 270, 350, 350, 255)
-
-#Draw.bresenham(pixels, 270, 270, 300, 350, 255)
-
-#Square = TextureShape() 
-#Square.insert_Point(50,50)
-#Square.insert_Point(50,200)
-#Square.insert_Point(200, 200)
-#Square.insert_Point(200, 50)
 
 #Cria janela com altura e largura especificadas
 pixels = Window.create_Image(900,600)
@@ -38,15 +23,15 @@ pygame.init()
 
 peixorros =[]
 penguato = Penguato(pixels)
-peixorro = Peixorro(pixels)
 
 sea_blue = (51, 97, 127)
 blue_pastel = (159, 174, 214)
 FPS = 45
 clock = pygame.time.Clock()
-peixorro_Showtime = 1000
+peixorro_Showtime = 2000
 last_ShownPeixorro = 0
 
+    
 while True:
     
     current_time = pygame.time.get_ticks()
@@ -69,8 +54,6 @@ while True:
         
     if keys[pygame.K_DOWN]:
         penguato.to_Down(1)  
-        
-    peixorro.to_Left( 1)
     
     #if keys[pygame.K_SPACE]:
     #    Penguato.rotate(penguato, 1)
@@ -83,21 +66,24 @@ while True:
     pixels.fill(sea_blue)
     
     for i in range(len(peixorros)):
+        if any(penguato.shape.check_collision(peixorro.shape) for peixorro in peixorros):
+            break    
         peixorros[i].to_Left(1)
-
-    # Desenha todos os polígonos armazenados na lista
-    for peixorro in peixorros:
-        peixorro.show(pixels)
     
-    peixorro.show(pixels)
+    # Desenha todos os polígonos armazenados na lista
+    #remove os que possuem limite menor
+    for peixorro in peixorros:
+        if peixorro.is_limit():
+            peixorros.pop(0)
+            del(peixorro)
+        else:
+            peixorro.show(pixels)
+
     penguato.show(pixels)           
-    #Texture.scanline_with_texture(pixels, penguato.shape, penguato.Texture)
     
     pygame.display.flip()
     
-    clock.tick(60)
-
-#Draw.scanline(pixels, Square, (255, 255, 255))
+    clock.tick(FPS)
 
 #Loop principal
 '''executando = True

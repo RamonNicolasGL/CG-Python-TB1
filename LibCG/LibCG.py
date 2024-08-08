@@ -307,6 +307,12 @@ class TextureShape:
 
     def insert_points(self, points):
         self.points += points
+        
+    def x_min(self):
+        return min(int(row[0]) for row in self.points)
+
+    def x_max(self):
+        return max(int(row[0]) for row in self.points)
 
     def y_min(self):
         return min(int(row[1]) for row in self.points)
@@ -324,6 +330,31 @@ class TextureShape:
         center_y = int(y_sum / num_points)
 
         return center_x, center_y
+    
+    def get_rectangle_bounds(self):
+        x_coords = [point[0] for point in self.points]
+        y_coords = [point[1] for point in self.points]
+
+        x1 = min(x_coords)
+        y1 = min(y_coords)
+        x2 = max(x_coords)
+        y2 = max(y_coords)
+
+        return x1, y1, x2, y2
+    
+    def check_collision(self, shape):
+        rect1_x1, rect1_y1, rect1_x2, rect1_y2 = self.get_rectangle_bounds()
+        rect2_x1, rect2_y1, rect2_x2, rect2_y2 = shape.get_rectangle_bounds()
+
+        # print(self.points)
+        # print(rect1_x1, rect1_y1, rect1_x2, rect1_y2)
+
+        return (
+            rect1_x1 <= rect2_x2
+            and rect1_x2 >= rect2_x1
+            and rect1_y1 <= rect2_y2
+            and rect1_y2 >= rect2_y1
+        )
     
 #Texture
 class Texture:
@@ -350,7 +381,8 @@ class Texture:
                     intersections.append(intersection)
 
             intersections.sort(key=lambda intersection: intersection[0])
-
+            
+            
             for pi in range(0, len(intersections), 2):
                 p1 = intersections[pi]
                 p2 = intersections[pi + 1]

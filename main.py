@@ -1,5 +1,6 @@
-import pygame
+#viewports
 
+import pygame
 from Heroes.Penguato import Penguato
 from Heroes.Peixorro import Peixorro
 
@@ -13,20 +14,30 @@ from LibCG.LibCG import (
     TextureShape,
     Transformations
 )
-
-
-#Cria janela com altura e largura especificadas
-pixels = Window.create_Image(900,600)
-
-# Inicialize o Pygame
-pygame.init()
-
-peixorros =[]
-penguato = Penguato(pixels)
-
 sea_blue = (51, 97, 127)
 blue_pastel = (159, 174, 214)
 FPS = 45
+
+pixels = Window(900, 600)
+#Cria janela com altura e largura especificadas
+#pixels = Window.create_Image(900,600)
+
+# Inicialize o Pygame
+window_game = [0, 0, 900, 600]
+viewport_game = [0, 0, 900, 600]
+
+viewport_mini_map = [450, 0, 500, 55]
+window_mini_map = [0, 0, 150, 250]
+
+window = [window_game, window_mini_map]
+viewports = [viewport_game, viewport_mini_map]
+
+
+pygame.init()
+
+
+peixorros =[]
+penguato = Penguato(pixels, window, viewports)
 clock = pygame.time.Clock()
 peixorro_Showtime = 2000
 last_ShownPeixorro = 0
@@ -58,28 +69,31 @@ while True:
     #if keys[pygame.K_SPACE]:
     #    Penguato.rotate(penguato, 1)
     
-    if current_time - last_ShownPeixorro >= peixorro_Showtime:
+    '''if current_time - last_ShownPeixorro >= peixorro_Showtime and len(peixorros) < 5:
         
         peixorros.append(Peixorro(pixels))
-        last_ShownPeixorro = current_time
+        last_ShownPeixorro = current_time'''
         
-    pixels.fill(sea_blue)
+    #pixels.fill(sea_blue)
     
-    for i in range(len(peixorros)):
+    '''for i in range(len(peixorros)):
         if any(penguato.shape.check_collision(peixorro.shape) for peixorro in peixorros):
+            #aqui
             break    
         peixorros[i].to_Left(1)
+        pixels.fill(sea_blue)'''
     
     # Desenha todos os polígonos armazenados na lista
     #remove os que possuem limite menor
-    for peixorro in peixorros:
+    '''for peixorro in peixorros:
         if peixorro.is_limit():
             peixorros.pop(0)
             del(peixorro)
         else:
-            peixorro.show(pixels)
+            peixorro.show(pixels)'''
 
-    penguato.show(pixels)           
+    penguato.show()  
+        
     
     pygame.display.flip()
     

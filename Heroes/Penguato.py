@@ -1,11 +1,15 @@
-from LibCG.LibCG import (Texture, TextureShape, Transformations)
+from LibCG.LibCG import (Texture, TextureShape, Transformations, Window)
 
 class Penguato:
     
-    def __init__(self, image):
+    def __init__(self, image, windows, viewports):
         
-        self.Texture = Texture.import_texture("PenguatoFundo.png")
         self.image = image
+        self.windows = windows
+        self.viewports = viewports
+        
+        self.cat_texture = Texture.import_texture("PenguatoFundo.png")
+        
         self.shape = TextureShape(
                 [
                     [150, 230, 0, 0],
@@ -15,9 +19,12 @@ class Penguato:
                 ]
         )
         
-    def show(self, image):
+    def show(self):
+        shape = self.image.map_window(self.shape, self.windows[0], self.viewports[0])
+        self.image.scanline_with_texture(shape, self.cat_texture)
         
-        Texture.scanline_with_texture(image, self.shape, self.Texture)
+        shape = self.image.map_window(self.shape, self.windows[1], self.viewports[1])
+        self.image.scanline_with_texture(shape, self.cat_texture)
         
     def to_Left(self, a):
         

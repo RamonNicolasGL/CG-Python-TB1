@@ -121,16 +121,48 @@ class Window:
             else:
                 self.set_Pixel(xi +y, yi + s*x, intensity)
                 
+    
     def draw_polygon(self, pol, intensity):
         
-        if len(pol.points) < 2: 
+        if len(pol) < 2: 
             print ("less than two sides")
             return
     
-        for i in range(0, len(pol.points) - 1):
-           self.bresenham(pol.points[i][0], pol.points[i][1], pol.points[i + 1][0], pol.points[i + 1][1], intensity)
+        for i in range(0, len(pol) - 1):
+           self.bresenham(pol[i][0], pol[i][1], pol[i + 1][0], pol[i + 1][1], intensity)
 
-        self.bresenham(pol.points[-1][0], pol.points[-1][1], pol.points[0][0], pol.points[0][1], intensity)
+        self.bresenham(pol[-1][0], pol[-1][1], pol[0][0], pol[0][1], intensity)
+    
+    #Circunferencia implementada pelo professor (Os arredondamentos deixam ela relativamente torta)
+    def circle(self, xc, yc, r, intensidade):
+        c = Shape()
+
+        for ang in np.arange(0, 2 * np.pi, 0.25):
+            c.insert_Point(math.floor(xc + r*math.cos(ang)), math.floor(yc + r*math.sin(ang)))
+            
+        self.draw_polygon(c.points, intensidade)
+    
+    #Circunferencia usando bresenham
+    def bresenham_circle(self, xc, yc, r, intensidade):
+        x = 0
+        y = r
+        quadrantes = [(1, 1), (-1, 1), (1, -1), (-1, -1)]
+        p = 3 - 2 * r
+
+        while y >= x:
+            x_aux, y_aux = y, x
+
+            for x_signal, y_signal in quadrantes:
+                self.set_Pixel(xc + x_signal * x, yc + y_signal * y, intensidade)
+                self.set_Pixel(xc + x_signal * x_aux, yc + y_signal * y_aux, intensidade)
+
+            x += 1
+
+            if p > 0:
+                y -= 1
+                p += 4 * (x - y) + 10
+            else:
+                p += 4 * x + 6
     
     
     def map_window(self, pol, window, viewport):
@@ -341,9 +373,188 @@ class Resources:
                 break
             yield temp
             count +=1
-        
-        
 
+
+#Shapes
+class Shape:
+    
+    def __init__(self, points=[]):
+        self.points = points
+    
+    def insert_Point(self, x, y):
+        self.points.append((x, y))
+        
+    def y_min(self):
+        return min(int(row[1]) for row in self.points)
+
+    def y_max(self):
+        return max(int(row[1]) for row in self.points)
+    
+    def get_rectangle_bounds(self):
+        x_coords = [point[0] for point in self.points]
+        y_coords = [point[1] for point in self.points]
+
+        x1 = min(x_coords)
+        y1 = min(y_coords)
+        x2 = max(x_coords)
+        y2 = max(y_coords)
+
+        return x1, y1, x2, y2
+
+class TextureShape:
+    
+    def __init__(self, points=[]):
+        self.points = points
+
+    def insert_points(self, points):
+        self.points += points
+        
+    def x_min(self):
+        return min(int(row[0]) for row in self.points)
+
+    def x_max(self):
+        return max(int(row[0]) for row in self.points)
+
+    def y_min(self):
+        return min(int(row[1]) for row in self.points)
+
+    def y_max(self):
+        return max(int(row[1]) for row in self.points)
+
+    def center(self):
+        
+        x_sum = sum(row[0] for row in self.points)
+        y_sum = sum(row[1] for row in self.points)
+        num_points = len(self.points)
+
+        center_x = int(x_sum / num_points)
+        center_y = int(y_sum / num_points)
+
+        return center_x, center_y
+    
+    def get_rectangle_bounds(self):
+        x_coords = [point[0] for point in self.points]
+        y_coords = [point[1] for point in self.points]
+
+        x1 = min(x_coords)
+        y1 = min(y_coords)
+        x2 = max(x_coords)
+        y2 = max(y_coords)
+
+        return x1, y1, x2, y2
+    
+    def check_collision(self, shape):
+        rect1_x1, rect1_y1, rect1_x2, rect1_y2 = self.get_rectangle_bounds()
+        rect2_x1, rect2_y1, rect2_x2, rect2_y2 = shape.get_rectangle_bounds()
+
+        # print(self.points)
+        # print(rect1_x1, rect1_y1, rect1_x2, rect1_y2)
+
+        return (
+            rect1_x1 <= rect2_x2
+            and rect1_x2 >= rect2_x1
+            and rect1_y1 <= rect2_y2
+            and rect1_y2 >= rect2_y1
+        )
+    
+#Texture
+class Texture:
+    
+    def import_texture(img_name):
+        cg_Tb1 = os.getcwd()
+        return np.asarray(Image.open(os.path.join(cg_Tb1, "Heroes", img_name)))
+
+
+
+class Transformations:
+    
+    def create_transformation_matrix():
+        return np.identity(3)
+
+    def compose_translation(matrix, tx, ty):
+        return (
+            np.array(
+                [
+                    [1, 0, tx],
+                    [0, 1, ty],
+                    [0, 0, 1]
+                ]
+            )
+            @ matrix
+        )
+
+    def compose_scale(matrix, sx, sy):
+        return (
+            np.array(
+                [
+                    [sx, 0, 0],
+                    [0, sy, 0],
+                    [0, 0, 1]
+                ]
+            )
+            @ matrix
+        )
+
+    def compose_rotation(matrix, ang):
+        ang = (ang * np.pi)/180
+
+        return np.array(
+            [
+                [np.cos(ang), -np.sin(ang), 0],
+                [np.sin(ang), np.cos(ang), 0],
+                [0, 0, 1]
+            ]
+            @ matrix
+        )
+
+    #bugando
+    def compose_mirroring(matrix):
+        return (
+            np.array(
+                [
+                    [-1, 0, 0],
+                    [0, -1, 0],
+                    [0, 0, 1]
+                ]
+            )
+            @ matrix
+        )
+
+    def compose_shear(matrix, cx, cy):
+        return (
+            np.array(
+                [
+                    [1, cx, 0],
+                    [cy, 1, 0],
+                    [0, 0, 1]
+                ]
+            )
+            @ matrix
+        )
+
+    def apply_transformation(polygon, matrix):
+        
+        points = []
+
+        for i in range(len(polygon.points)):
+            
+            pt = polygon.points[i][:2]
+            pt.append(1)
+            pt = np.transpose(pt)
+
+            transformed_pt = matrix @ pt
+
+            transformed_pt = np.transpose(transformed_pt)
+            points.append(transformed_pt[:2].tolist())
+
+            for j in range(2, len(polygon.points[i])):
+                
+                points[i].append(polygon.points[i][j])
+
+        if type(polygon) is Shape:
+            return Shape(points)
+        return TextureShape(points)
+'''
 #Drawing related methods
 class Draw:
 
@@ -565,251 +776,4 @@ class Draw:
                 p_int.append(intersec)
 
             if len(p_int) != 0:
-                Draw.print_scan(screen, p_int, intensidade)
-
-#Shapes
-class Shape:
-    
-    def __init__(self, points=[]):
-        self.points = points
-    
-    def insert_Point(self, x, y):
-        self.points.append((x, y))
-        
-    def y_min(self):
-        return min(int(row[1]) for row in self.points)
-
-    def y_max(self):
-        return max(int(row[1]) for row in self.points)
-    
-    def get_rectangle_bounds(self):
-        x_coords = [point[0] for point in self.points]
-        y_coords = [point[1] for point in self.points]
-
-        x1 = min(x_coords)
-        y1 = min(y_coords)
-        x2 = max(x_coords)
-        y2 = max(y_coords)
-
-        return x1, y1, x2, y2
-
-class TextureShape:
-    
-    def __init__(self, points=[]):
-        self.points = points
-
-    def insert_points(self, points):
-        self.points += points
-        
-    def x_min(self):
-        return min(int(row[0]) for row in self.points)
-
-    def x_max(self):
-        return max(int(row[0]) for row in self.points)
-
-    def y_min(self):
-        return min(int(row[1]) for row in self.points)
-
-    def y_max(self):
-        return max(int(row[1]) for row in self.points)
-
-    def center(self):
-        
-        x_sum = sum(row[0] for row in self.points)
-        y_sum = sum(row[1] for row in self.points)
-        num_points = len(self.points)
-
-        center_x = int(x_sum / num_points)
-        center_y = int(y_sum / num_points)
-
-        return center_x, center_y
-    
-    def get_rectangle_bounds(self):
-        x_coords = [point[0] for point in self.points]
-        y_coords = [point[1] for point in self.points]
-
-        x1 = min(x_coords)
-        y1 = min(y_coords)
-        x2 = max(x_coords)
-        y2 = max(y_coords)
-
-        return x1, y1, x2, y2
-    
-    def check_collision(self, shape):
-        rect1_x1, rect1_y1, rect1_x2, rect1_y2 = self.get_rectangle_bounds()
-        rect2_x1, rect2_y1, rect2_x2, rect2_y2 = shape.get_rectangle_bounds()
-
-        # print(self.points)
-        # print(rect1_x1, rect1_y1, rect1_x2, rect1_y2)
-
-        return (
-            rect1_x1 <= rect2_x2
-            and rect1_x2 >= rect2_x1
-            and rect1_y1 <= rect2_y2
-            and rect1_y2 >= rect2_y1
-        )
-    
-#Texture
-class Texture:
-    
-    def import_texture(img_name):
-        cg_Tb1 = os.getcwd()
-        return np.asarray(Image.open(os.path.join(cg_Tb1, "Heroes", img_name)))
-    
-
-    def scanline_with_texture(screen, polygon, texture):
-        y_min = polygon.y_min()
-        y_max = polygon.y_max()
-
-        for y in range(y_min, y_max + 1):
-            intersections = []
-
-            for p in range(len(polygon.points)):
-                pi = polygon.points[p]
-                pf = polygon.points[(p + 1) % len(polygon.points)]
-
-                intersection = Texture.__intersection_with_texture(y, [pi, pf])
-
-                if intersection[0] >= 0:
-                    intersections.append(intersection)
-
-            intersections.sort(key=lambda intersection: intersection[0])
-            
-            
-            for pi in range(0, len(intersections), 2):
-                p1 = intersections[pi]
-                p2 = intersections[pi + 1]
-
-                x1 = p1[0]
-                x2 = p2[0]
-
-                if x1 == x2:
-                    continue
-
-                if x2 < x1:
-                    p1, p2 = p2, p1
-
-                for xk in range(int(p1[0]), int(p2[0]) + 1):
-                    pc = (xk - p1[0]) / (p2[0] - p1[0])
-
-                    tx = p1[2] + pc * (p2[2] - p1[2])
-                    ty = p1[3] + pc * (p2[3] - p1[3])
-
-                    color = Window.get_pixel_with_texture(texture, tx, ty)
-
-                    Draw.set_Pixel(screen, xk, y, color)
-                    
-
-    def __intersection_with_texture(y, segment):
-        pi = segment[0]
-        pf = segment[1]
-
-        # Horizontal segment (has no intersection)
-        if pi[1] == pf[1]:
-            return [-1, 0, 0, 0]
-
-        # Secure starting point on top
-        if pi[1] > pf[1]:
-            pi, pf = pf, pi
-
-        t = (y - pi[1]) / (pf[1] - pi[1])
-
-        if t > 0 and t <= 1:
-            x = pi[0] + t * (pf[0] - pi[0])
-
-            tx = pi[2] + t * (pf[2] - pi[2])
-            ty = pi[3] + t * (pf[3] - pi[3])
-
-            return [x, y, tx, ty]
-
-        return [-1, 0, 0, 0]
-
-
-class Transformations:
-    
-    def create_transformation_matrix():
-        return np.identity(3)
-
-    def compose_translation(matrix, tx, ty):
-        return (
-            np.array(
-                [
-                    [1, 0, tx],
-                    [0, 1, ty],
-                    [0, 0, 1]
-                ]
-            )
-            @ matrix
-        )
-
-    def compose_scale(matrix, sx, sy):
-        return (
-            np.array(
-                [
-                    [sx, 0, 0],
-                    [0, sy, 0],
-                    [0, 0, 1]
-                ]
-            )
-            @ matrix
-        )
-
-    def compose_rotation(matrix, ang):
-        ang = (ang * np.pi)/180
-
-        return np.array(
-            [
-                [np.cos(ang), -np.sin(ang), 0],
-                [np.sin(ang), np.cos(ang), 0],
-                [0, 0, 1]
-            ]
-            @ matrix
-        )
-
-    #bugando
-    def compose_mirroring(matrix):
-        return (
-            np.array(
-                [
-                    [-1, 0, 0],
-                    [0, -1, 0],
-                    [0, 0, 1]
-                ]
-            )
-            @ matrix
-        )
-
-    def compose_shear(matrix, cx, cy):
-        return (
-            np.array(
-                [
-                    [1, cx, 0],
-                    [cy, 1, 0],
-                    [0, 0, 1]
-                ]
-            )
-            @ matrix
-        )
-
-    def apply_transformation(polygon, matrix):
-        
-        points = []
-
-        for i in range(len(polygon.points)):
-            
-            pt = polygon.points[i][:2]
-            pt.append(1)
-            pt = np.transpose(pt)
-
-            transformed_pt = matrix @ pt
-
-            transformed_pt = np.transpose(transformed_pt)
-            points.append(transformed_pt[:2].tolist())
-
-            for j in range(2, len(polygon.points[i])):
-                
-                points[i].append(polygon.points[i][j])
-
-        if type(polygon) is Shape:
-            return Shape(points)
-        return TextureShape(points)
+                Draw.print_scan(screen, p_int, intensidade)'''

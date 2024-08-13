@@ -7,15 +7,14 @@ from Heroes.Peixorro import Peixorro
 
 from LibCG.LibCG import (
     Window,
-    Draw,
     Resources,
     Shape,
     Texture,
     TextureShape,
-    Transformations
 )
 sea_blue = (51, 97, 127)
 sea_blue2 = (77, 146, 189)
+red_wine = (110, 0, 0)
 blue_pastel = (159, 174, 214)
 FPS = 45
 
@@ -27,28 +26,67 @@ pixels = Window(700, 700)
 def menu(pixels):
     penguatoVSpeixorro_logo = TextureShape(
         [                    
-            [150,   650, 0, 0],
-            [150,   400, 0, 1],
-            [550,   400, 1, 1],
-            [550,   650, 1, 0],
+            [100,   650, 0, 0],
+            [100,   350, 0, 1],
+            [600,   350, 1, 1],
+            [600,   650, 1, 0],
         
         ]
     )
     
-    penguatoVSpeixorro_tex = Texture.import_texture("Logo.png")
+    penguatoVSpeixorro_tex = Texture.import_texture("Logo2.png")
+    
+    pixels.surface.fill(sea_blue2)
+    #ENQUADRAMENTOS
+    pixels.bresenham(20, 675, 680, 675, red_wine)
+    pixels.bresenham(20, 25, 680, 25, red_wine)
+    pixels.bresenham(20, 25, 20, 675, red_wine)
+    pixels.bresenham(680, 25, 680, 675, red_wine)
+    
+    pixels.bresenham(40, 45, 40, 350, red_wine)
+    pixels.bresenham(40, 45, 660, 45, red_wine)
+    pixels.bresenham(660, 45, 660, 350, red_wine)
+    pixels.bresenham(40, 350, 660, 350, red_wine)
     
     
+    #pixels.bresenham(20, 25, 20, 200, red_wine)
+    
+    
+    
+    #BOLHAS
+    pixels.bresenham_circle(55, 635, 20, red_wine)
+    pixels.bresenham_circle(70, 600, 15, red_wine)
+    pixels.bresenham_circle(52, 573, 10, red_wine)
+    pixels.bresenham_circle(74, 570, 7, red_wine)
+    pixels.bresenham_circle(67, 550, 7, red_wine)
+    
+    penguatoVSpeixorro_instrucoes = TextureShape(
+        [                    
+            [60,   330, 0, 0],
+            [60,   50, 0, 1],
+            [600,   50, 1, 1],
+            [600,   330, 1, 0],
+        
+        ]
+    )
+    
+    penguatoVSpeixorroInstrucoes_tex = Texture.import_texture("Instruções2.png")
+     
+    pixels.scanline_with_texture(penguatoVSpeixorro_logo, penguatoVSpeixorro_tex)
+    pixels.scanline_with_texture(penguatoVSpeixorro_instrucoes, penguatoVSpeixorroInstrucoes_tex)
     
     running = True
 
+    pygame.display.update()
+    
     while running:
         
         
-        pygame.display.update()
+        #pygame.display.update()
         
-        pixels.surface.fill(sea_blue2)
+        #pixels.surface.fill(sea_blue2)
         
-        pixels.scanline_with_texture(penguatoVSpeixorro_logo, penguatoVSpeixorro_tex)
+        #pixels.scanline_with_texture(penguatoVSpeixorro_logo, penguatoVSpeixorro_tex)
         
         keys = pygame.key.get_pressed() 
         
@@ -91,9 +129,10 @@ pygame.init()
 
 
 peixorros =[]
+peixorros_desviados = 0
 penguato = Penguato(pixels, window, viewports)
 clock = pygame.time.Clock()
-peixorro_Showtime = 2000
+peixorro_Showtime = 900
 last_ShownPeixorro = 0
 
     
@@ -153,12 +192,16 @@ while True:
         peixorros[i].to_Left(1)
     pixels.surface.fill(sea_blue)
     
+    
     # Desenha todos os polígonos armazenados na lista
     #remove os que possuem limite menor
     for peixorro in peixorros:
         if peixorro.is_limit():
             peixorros.pop(0)
             del(peixorro)
+            peixorros_desviados += 1
+            if peixorros_desviados == 20:
+                print("pronto")
         else:
             peixorro.show()
 

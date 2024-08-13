@@ -30,7 +30,8 @@ class Window:
         if y >= self.height:    
             y = self.width - 1 
         
-        gfxdraw.pixel(self.surface, x, y, color) 
+        self.surface.set_at((x, y), color) 
+        #gfxdraw.pixel(self.surface, x, y, color) 
         
     def create_Image(image_width, image_height):
         return pygame.display.set_mode((image_width, image_height))
@@ -137,6 +138,7 @@ class Window:
         y_ini_vp = viewport[1]
         x_fin_vp = viewport[2]
         y_fin_vp = viewport[3]
+        
         x_ini = window[0]
         y_ini = window[1]
         x_fin = window[2]
@@ -149,7 +151,7 @@ class Window:
             [
                 [a, 0, x_ini_vp - a * x_ini],
                 [0, b, y_fin_vp - b * y_ini],
-                [0, 0, 1],
+                [0, 0,                    1],
             ]
         )
 

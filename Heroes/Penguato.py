@@ -8,24 +8,36 @@ class Penguato:
         self.windows = windows
         self.viewports = viewports
         
-        self.cat_texture = Texture.import_texture("PenguatoFundo.png")
+        self.penguato_texture = Texture.import_texture("PenguatoFundo.png")
         
         self.shape = TextureShape(
                 [
-                    [150, 230, 0, 0],
-                    [150, 150, 0, 1],
-                    [180, 150, 1, 1],
-                    [180, 230, 1, 0]
+                    [150, -230, 0, 1],
+                    [150, -150, 0, 0],
+                    [180, -150, 1, 0],
+                    [180, -230, 1, 1]
                 ]
         )
         
     def show(self):
         shape = self.image.map_window(self.shape, self.windows[0], self.viewports[0])
-        self.image.scanline_with_texture(shape, self.cat_texture)
+        self.image.scanline_with_texture(shape, self.penguato_texture)
         
         shape = self.image.map_window(self.shape, self.windows[1], self.viewports[1])
-        self.image.scanline_with_texture(shape, self.cat_texture)
-        
+        self.image.scanline_with_texture(shape, self.penguato_texture)
+    
+    def is_notlimitLEFT(self):
+        return self.shape.x_min() != 0
+    
+    def is_notlimitRIGHT(self):
+        return self.shape.x_max() < 700
+    
+    def is_notlimitUP(self):
+        return self.shape.y_max() < 0 
+    
+    def is_notlimitDOWN(self):
+        return self.shape.y_min() > -700
+    
     def to_Left(self, a):
         
         matrix = Transformations.create_transformation_matrix()

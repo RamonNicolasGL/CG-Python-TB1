@@ -98,6 +98,85 @@ def menu(pixels):
             if keys[pygame.K_p]:
                 running = False
 
+def win_screen(pixels):
+    penguatoWins = TextureShape(
+        [                    
+            [100,   500, 0, 0],
+            [100,   200, 0, 1],
+            [600,   200, 1, 1],
+            [600,   500, 1, 0],
+        
+        ]
+    )
+    penguatoWins_tex = Texture.import_texture("PenguatoWins.png")
+    
+    pixels.surface.fill(sea_blue2)
+    pixels.scanline_with_texture(penguatoWins, penguatoWins_tex)
+    
+    #ENQUADRAMENTOS
+    pixels.bresenham(20, 675, 680, 675, red_wine)
+    pixels.bresenham(20, 25, 680, 25, red_wine)
+    pixels.bresenham(20, 25, 20, 675, red_wine)
+    pixels.bresenham(680, 25, 680, 675, red_wine)
+    
+    
+    pygame.display.update()
+    
+    running = True
+    while running:
+
+        
+        keys = pygame.key.get_pressed() 
+        
+        for event in pygame.event.get():
+            
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                
+            if keys[pygame.K_p]:
+                running = False
+    
+    
+    
+    
+def lose_screen(pixels):
+    penguatoLose = TextureShape(
+        [                    
+            [100,   500, 0, 0],
+            [100,   200, 0, 1],
+            [600,   200, 1, 1],
+            [600,   500, 1, 0],
+        
+        ]
+    )
+    
+    penguatoLose_tex = Texture.import_texture("PeixorroWin.png")
+    
+    pixels.surface.fill(sea_blue2)
+    pixels.scanline_with_texture(penguatoLose, penguatoLose_tex)
+    
+    #ENQUADRAMENTOS
+    pixels.bresenham(20, 675, 680, 675, red_wine)
+    pixels.bresenham(20, 25, 680, 25, red_wine)
+    pixels.bresenham(20, 25, 20, 675, red_wine)
+    pixels.bresenham(680, 25, 680, 675, red_wine)
+    
+    pygame.display.update()
+    
+    running = True
+    while running:
+
+        
+        keys = pygame.key.get_pressed() 
+        
+        for event in pygame.event.get():
+            
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                
+            if keys[pygame.K_p]:
+                running = False
+
     
     
     
@@ -132,7 +211,7 @@ peixorros =[]
 peixorros_desviados = 0
 penguato = Penguato(pixels, window, viewports)
 clock = pygame.time.Clock()
-peixorro_Showtime = 900
+peixorro_Showtime = 2000
 last_ShownPeixorro = 0
 
     
@@ -187,8 +266,7 @@ while True:
     
     for i in range(len(peixorros)):
         if any(penguato.shape.check_collision(peixorro.shape) for peixorro in peixorros):
-            #aqui
-            break    
+            lose_screen(pixels)   
         peixorros[i].to_Left(1)
     pixels.surface.fill(sea_blue)
     
@@ -200,8 +278,8 @@ while True:
             peixorros.pop(0)
             del(peixorro)
             peixorros_desviados += 1
-            if peixorros_desviados == 20:
-                print("pronto")
+            if peixorros_desviados == 10:
+                win_screen(pixels)
         else:
             peixorro.show()
 

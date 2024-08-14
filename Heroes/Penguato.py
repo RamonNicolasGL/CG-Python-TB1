@@ -1,4 +1,4 @@
-from LibCG.LibCG import (Texture, TextureShape, Transformations, Window)
+from LibCG.LibCG import (Texture, TextureShape, Window)
 
 class Penguato:
     
@@ -21,10 +21,10 @@ class Penguato:
         
     def show(self):
         shape = self.image.map_window(self.shape, self.windows[0], self.viewports[0])
-        self.image.scanline_with_texture(shape, self.penguato_texture)
+        self.image.scanline_Tex(shape, self.penguato_texture)
         
         shape = self.image.map_window(self.shape, self.windows[1], self.viewports[1])
-        self.image.scanline_with_texture(shape, self.penguato_texture)
+        self.image.scanline_Tex(shape, self.penguato_texture)
     
     def is_notlimitLEFT(self):
         return self.shape.x_min() != 0
@@ -40,30 +40,30 @@ class Penguato:
     
     def to_Left(self, a):
         
-        matrix = Transformations.create_transformation_matrix()
-        matrix = Transformations.compose_translation(matrix, -10*a, 0)
-        self.shape = Transformations.apply_transformation(self.shape, matrix)
+        matrix = self.image.create_transformation_matrix()
+        matrix = self.image.translation(matrix, -10*a, 0)
+        self.shape = self.image.apply_transformation(self.shape, matrix)
         
     def to_Right(self, a):
         
-        matrix = Transformations.create_transformation_matrix()
-        matrix = Transformations.compose_translation(matrix, 10*a, 0)
-        self.shape = Transformations.apply_transformation(self.shape, matrix)
+        matrix = self.image.create_transformation_matrix()
+        matrix = self.image.translation(matrix, 10*a, 0)
+        self.shape = self.image.apply_transformation(self.shape, matrix)
     
     def to_Up(self, a):
         
-        matrix = Transformations.create_transformation_matrix()
-        matrix = Transformations.compose_translation(matrix, 0, 10*a)
-        self.shape = Transformations.apply_transformation(self.shape, matrix)
+        matrix = self.image.create_transformation_matrix()
+        matrix = self.image.translation(matrix, 0, 10*a)
+        self.shape = self.image.apply_transformation(self.shape, matrix)
     
     def to_Down(self, a):
         
-        matrix = Transformations.create_transformation_matrix()
-        matrix = Transformations.compose_translation(matrix, 0, -10*a)
-        self.shape = Transformations.apply_transformation(self.shape, matrix)
+        matrix = self.image.create_transformation_matrix()
+        matrix = self.image.translation(matrix, 0, -10*a)
+        self.shape = self.image.apply_transformation(self.shape, matrix)
     
     def rotate(self, ang):
         
-        matrix = Transformations.create_transformation_matrix()
-        matrix = Transformations.compose_rotation(matrix, ang)
-        self.shape = Transformations.apply_transformation(self.shape, matrix)
+        matrix = self.image.create_transformation_matrix()
+        matrix = self.image.rotation(matrix, ang)
+        self.shape = self.image.apply_transformation(self.shape, matrix)

@@ -1,4 +1,4 @@
-from LibCG.LibCG import (Texture, TextureShape, Transformations, Window)
+from LibCG.LibCG import (Texture, TextureShape, Window)
 import random
 import numpy as np
 
@@ -27,25 +27,16 @@ class Peixorro:
     
     def show(self):
         shape = self.image.map_window(self.shape, self.windows[0], self.viewports[0])
-        self.image.scanline_with_texture(shape, self.peixorro_texture)
+        self.image.scanline_Tex(shape, self.peixorro_texture)
         
         shape = self.image.map_window(self.shape, self.windows[1], self.viewports[1])
-        self.image.scanline_with_texture(shape, self.peixorro_texture)
-        
-    #def show(self, image):       
-        #Texture.scanline_with_texture(image, self.shape, self.Texture)
+        self.image.scanline_Tex(shape, self.peixorro_texture)
 
     def to_Left(self, a):
-        matrix = Transformations.create_transformation_matrix()
-        matrix = Transformations.compose_translation(matrix, -5*a, 0)
-        self.shape = Transformations.apply_transformation(self.shape, matrix)
+        matrix = self.image.create_transformation_matrix()
+        matrix = self.image.translation(matrix, -5*a, 0)
+        self.shape = self.image.apply_transformation(self.shape, matrix)
 
     def is_limit(self):
         return self.shape.x_min() == 0
-
-'''    def check_for_colision(self, penguato):
-        return any(
-            penguato.shape.check_collision(peixorro) for peixorro, _, _, _ in self.polygons
-        )'''
-
 

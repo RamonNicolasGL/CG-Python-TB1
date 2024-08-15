@@ -169,6 +169,17 @@ def lose_screen(pixels):
     pixels.bresenham(20, 25, 20, 675, red_wine)
     pixels.bresenham(680, 25, 680, 675, red_wine)
     
+    #POLIGONO BASE
+    square = Shape()
+    square.insert_Point(600, 50)
+    square.insert_Point(600, 100)
+    square.insert_Point(650, 100)
+    square.insert_Point(650, 50)
+    
+    pixels.draw_shape(square, white)
+    
+    pixels.scanline(square, white)
+    
     bolhas()
     pygame.display.update()
     

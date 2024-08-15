@@ -153,16 +153,16 @@ class Window:
                 self.set_Pixel(xi +y, yi + s*x, intensity)
                 
     
-    def draw_polygon(self, pol, intensity):
+    def draw_shape(self, pol, intensity):
         
-        if len(pol) < 2: 
+        if len(pol.points) < 2: 
             print ("less than two sides")
             return
     
-        for i in range(0, len(pol) - 1):
-           self.bresenham(pol[i][0], pol[i][1], pol[i + 1][0], pol[i + 1][1], intensity)
+        for i in range(0, len(pol.points) - 1):
+           self.bresenham(pol.points[i][0], pol.points[i][1], pol.points[i + 1][0], pol.points[i + 1][1], intensity)
 
-        self.bresenham(pol[-1][0], pol[-1][1], pol[0][0], pol[0][1], intensity)
+        self.bresenham(pol.points[-1][0], pol.points[-1][1], pol.points[0][0], pol.points[0][1], intensity)
     
     #Circunferencia implementada pelo professor (Os arredondamentos deixam ela relativamente torta)
     def circle(self, xc, yc, r, intensidade):
@@ -171,7 +171,7 @@ class Window:
         for ang in np.arange(0, 2 * np.pi, 0.25):
             c.insert_Point(math.floor(xc + r*math.cos(ang)), math.floor(yc + r*math.sin(ang)))
             
-        self.draw_polygon(c.points, intensidade)
+        self.draw_shape(c.points, intensidade)
     
     #Circunferencia usando bresenham
     def bresenham_circle(self, xc, yc, r, intensidade):
@@ -218,6 +218,75 @@ class Window:
         )
 
         return self.apply_transformation(pol, matrix)
+    
+    def intersecao(self, y, pi, pf):
+
+        if pi[1] == pf[1]:
+            return -1
+            
+        if pi[1] > pf[1]:
+            aux = pi
+            pi = pf
+            pf = aux
+            
+        t = (y - pi[1])/(pf[1] - pi[1])
+        
+        if (t <= 0) or (t > 1) :
+            return -1
+            
+        x = pi[0] + t*(pf[0] - pi[0])
+
+        return (x,y)
+
+
+    
+    def print_scan(self, p_int, intensidade):
+    
+        p_int = sorted(p_int, key=lambda x: x[0])
+
+        y = p_int[0][1]
+        
+        for i in range(0, len(p_int) - 1, 2):
+                x1 = p_int[i][0]
+                x2 = p_int[i + 1][0]  
+                
+                for x in range(round(x1), round(x2) + 1):  
+                    self.set_Pixel(round(x), y, intensidade)
+
+
+    ##
+    def scanline(self, pol, intensidade):
+
+        #y min e max
+        y_min = min(p[1] for p in pol.points)
+        y_max = max(p[1] for p in pol.points)
+
+        for y in range(y_min, y_max + 1):
+
+            p_int = []
+
+            pi = pol.points[0]
+
+            for p in pol.points[1:]:
+                pf = p
+                
+                intersec = self.intersecao(y, pi, pf)
+
+                if intersec != -1:
+
+                    p_int.append(intersec)
+
+                pi = pf
+
+            aux = pol.points[0]
+
+            intersec = self.intersecao(y, pi, aux)
+            if intersec != -1:
+
+                p_int.append(intersec)
+
+            if len(p_int) != 0:
+                self.print_scan( p_int, intensidade)
     
     def intersection_with_texture(self, y, segment):
         pi = segment[0]

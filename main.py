@@ -169,6 +169,8 @@ def lose_screen(pixels):
     pixels.bresenham(20, 25, 20, 675, red_wine)
     pixels.bresenham(680, 25, 680, 675, red_wine)
     
+    pixels.bresenham_ellipse(90, 620, 20, 40, white)
+    
     #POLIGONO BASE
     square = Shape()
     square.insert_Point(600, 50)

@@ -195,6 +195,60 @@ class Window:
             else:
                 p += 4 * x + 6
     
+    def bresenham_ellipse(self, xc, yc, rx, ry, color):
+        x = 0
+        y = abs(ry)
+
+        sectors = [(1, 1), (-1, 1), (1, -1), (-1, -1)]
+
+        rx_squared = rx**2
+        ry_squared = ry**2
+
+        px = 0
+        py = 2 * rx_squared * y
+
+        p = ry_squared - (rx_squared * ry) + (0.25 * rx_squared)
+
+        while px <= py:
+            x_aux, y_aux = x, y
+
+            for x_signal, y_signal in sectors:
+                self.set_Pixel(xc + x_signal * x, yc + y_signal * y, color)
+                self.set_Pixel(xc + x_signal * x_aux, yc + y_signal * y_aux, color)
+
+            x += 1
+            px += 2 * ry_squared
+
+            if p < 0:
+                p += ry_squared + px
+            else:
+                y -= 1
+                py -= 2 * rx_squared
+                p += ry_squared + px - py
+
+        p = (
+            ry_squared * (x + 0.5) ** 2
+            + rx_squared * (y - 1) ** 2
+            - rx_squared * ry_squared
+        )
+
+        while y >= 0:
+            x_aux, y_aux = x, y
+
+            for x_signal, y_signal in sectors:
+                self.set_Pixel(xc + x_signal * x, yc + y_signal * y, color)
+                self.set_Pixel(xc + x_signal * x_aux, yc + y_signal * y_aux, color)
+
+            y -= 1
+            py -= 2 * rx_squared
+
+            if p > 0:
+                p += rx_squared - py
+            else:
+                x += 1
+                px += 2 * ry_squared
+                p += rx_squared - py + px
+    
     def map_window(self, pol, window, viewport):
         x_ini_vp = viewport[0]
         y_ini_vp = viewport[1]

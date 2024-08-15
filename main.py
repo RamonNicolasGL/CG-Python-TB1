@@ -1,6 +1,7 @@
 import pygame
 from Heroes.Penguato import Penguato
 from Heroes.Peixorro import Peixorro
+import time
 
 
 from LibCG.LibCG import (
@@ -142,6 +143,8 @@ def win_screen(pixels):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+        time.sleep(5)
+        pygame.quit()
     
 def lose_screen(pixels):
     penguatoLose = TextureShape(
@@ -171,10 +174,11 @@ def lose_screen(pixels):
     
     running = True
     while running:
-        keys = pygame.key.get_pressed() 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+        time.sleep(5)
+        pygame.quit()
     
 menu(pixels)
 

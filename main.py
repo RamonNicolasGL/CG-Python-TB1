@@ -12,6 +12,7 @@ from LibCG.LibCG import (
     TextureShape,
 
 )
+
 #CORES
 white = (255, 255, 255)
 sea_blue = (51, 97, 127)
@@ -67,12 +68,12 @@ def menu(pixels):
     #ENQUADRAMENTOS
     #BRESENHAM
     pixels.bresenham(20, 675, 680, 675, red_wine)
-    pixels.bresenham(20, 25, 680, 25, red_wine)
-    pixels.bresenham(20, 25, 20, 675, red_wine)
+    pixels.bresenham(20,  25, 680,  25, red_wine)
+    pixels.bresenham(20,  25,  20, 675, red_wine)
     pixels.bresenham(680, 25, 680, 675, red_wine)
     
-    pixels.bresenham(40, 45, 40, 350, red_wine)
-    pixels.bresenham(40, 45, 660, 45, red_wine)
+    pixels.bresenham(40,  45,  40, 350, red_wine)
+    pixels.bresenham(40,  45, 660,  45, red_wine)
     pixels.bresenham(660, 45, 660, 350, red_wine)
     pixels.bresenham(40, 350, 660, 350, red_wine)
     
@@ -84,8 +85,8 @@ def menu(pixels):
     pixels.bresenham_circle(55, 635, 20, white)
     pixels.bresenham_circle(70, 600, 15, white)
     pixels.bresenham_circle(52, 573, 10, white)
-    pixels.bresenham_circle(74, 570, 7, white)
-    pixels.bresenham_circle(67, 550, 7, white)
+    pixels.bresenham_circle(74, 570,  7, white)
+    pixels.bresenham_circle(67, 550,  7, white)
     
     penguatoVSpeixorro_instrucoes = TextureShape(
         [                    

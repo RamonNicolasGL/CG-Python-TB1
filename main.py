@@ -135,6 +135,20 @@ def win_screen(pixels):
     pixels.bresenham(20, 25, 20, 675, red_wine)
     pixels.bresenham(680, 25, 680, 675, red_wine)
     
+    #POLIGONO BASE
+    square = Shape()
+    square.insert_Point(600, 50)
+    square.insert_Point(600, 100)
+    square.insert_Point(650, 100)
+    square.insert_Point(650, 50)
+    
+    pixels.draw_shape(square, red_wine)
+    
+    pixels.scanline(square, red_wine)
+    
+    #ELLIPSE
+    pixels.bresenham_ellipse(350, 200, 180, 20, red_wine)
+    
     bolhas()
     pygame.display.update()
     
@@ -143,8 +157,7 @@ def win_screen(pixels):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-        time.sleep(5)
-        pygame.quit()
+
     
 def lose_screen(pixels):
     penguatoLose = TextureShape(
@@ -169,7 +182,8 @@ def lose_screen(pixels):
     pixels.bresenham(20, 25, 20, 675, red_wine)
     pixels.bresenham(680, 25, 680, 675, red_wine)
     
-    pixels.bresenham_ellipse(90, 620, 20, 40, white)
+    #ELLIPSE
+    pixels.bresenham_ellipse(350, 200, 180, 20, red_wine)
     
     #POLIGONO BASE
     square = Shape()
@@ -178,26 +192,24 @@ def lose_screen(pixels):
     square.insert_Point(650, 100)
     square.insert_Point(650, 50)
     
-    pixels.draw_shape(square, white)
+    pixels.draw_shape(square, red_wine)
     
-    pixels.scanline(square, white)
+    pixels.scanline(square, red_wine)
     
     bolhas()
     pygame.display.update()
     
-    running = True
-    while running:
+    while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-        time.sleep(5)
-        pygame.quit()
     
+#MENU INICIAL
 menu(pixels)
 
 
-#JOGO 
 
+#JOGO 
 #VIEWPORTS
 window_game = [0, 0, 700, 700]
 viewport_game = [0, 0, 700, 700]
@@ -214,8 +226,10 @@ penguato = Penguato(pixels, window, viewports)
 
 pygame.init()
 clock = pygame.time.Clock()
+font = pygame.font.Font(None, 20)
 peixorro_Showtime = 1000
 last_ShownPeixorro = 0
+count_peixorros = 0
 
     
 while True:
@@ -252,6 +266,8 @@ while True:
         peixorros[i].to_Left(1)
     
     pixels.surface.fill(sea_blue)
+    count_TOwin = font.render(f'{count_peixorros} / 20', True, white)
+    pixels.surface.blit(count_TOwin, (610, 50))
     bolhas()
     
     #MINI MAPA
@@ -264,6 +280,7 @@ while True:
             peixorros_desviados += 1
             
             del(peixorro)
+            count_peixorros += 1 
             
             if peixorros_desviados == 20:
                 win_screen(pixels)
